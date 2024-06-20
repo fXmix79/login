@@ -1,8 +1,9 @@
 -- Create a database
-CREATE DATABASE example_db;
+CREATE DATABASE users_db
+character set utf8mb4 collate utf8mb4_general_ci;
 
 -- Use the created database
-USE example_db;
+USE users_db;
 
 -- Create a users table
 CREATE TABLE users (
@@ -13,5 +14,7 @@ CREATE TABLE users (
 
 -- Insert some sample data
 INSERT INTO users (username, password) VALUES
-('user1', '$2y$10$EIXuQoL6ZnS2Rx1hFxeEUu9U7CNc7x3IhCeihwWXcXG4a3LS0VOWG'), -- password: password123
-('user2', '$2y$10$e9Lw4.vMdOaJzCPlpRQSSOnJkK9oN0O7eOBF6F3UgNuwlCpq6OgyC'); -- password: mysecurepassword
+('user1', '$2y$10$67XG5HuZdNlJCQDhcg1Nouw.MDshJ/jz9Q45TIuqI8A6XyNmRWQLm'), -- password: password123
+('user2', '$2y$10$ShJNVoTu3d0gcCXeQMnu7OxNoBoD2INnI4YTX9dIRCLzneVYjsxom'); -- password: mysecurepassword
+
+select * from users;

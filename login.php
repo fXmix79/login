@@ -2,13 +2,15 @@
 session_start();
 
 // Database connection parameters
-$servername = "localhost";
+$servername = "127.0.0.1";
 $username = "root";
 $password = "";
-$dbname = "example_db";
+$dbname = "users_db";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$conn = new mysqli($servername, $username, $password, $dbname, 3306);
+$conn->set_charset('utf8mb4');
 
 // Check connection
 if ($conn->connect_error) {
@@ -25,15 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pass = sanitizeInput($_POST['password'], $conn);
 
     // Prepare and bind
-    $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
+    $stmt = $conn->prepare("SELECT password FROM users WHERE username = ?");
     $stmt->bind_param("s", $user);
-
+    
     // Execute the statement
     $stmt->execute();
 
     // Bind result variables
-    $stmt->bind_result($id, $hashed_password);
-
+    $stmt->bind_result($hashed_password);
+    
     // Fetch value
     if ($stmt->fetch()) {
         // Verify password
