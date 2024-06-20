@@ -40,7 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($pass, $hashed_password)) {
             // Password is correct, start session
             $_SESSION['username'] = $user;
-            echo "Login successful! Welcome, " . $user;
+            // Redirect to index.html
+            header("Location: index.php");
+            exit();
         } else {
             // Password is incorrect
             echo "Invalid username or password.";
