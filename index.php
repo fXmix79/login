@@ -12,7 +12,7 @@ if (!isset($_SESSION['username'])) {
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "example_db";
+$dbname = "users_db";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
