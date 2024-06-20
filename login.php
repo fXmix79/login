@@ -2,9 +2,9 @@
 session_start();
 
 // Database connection parameters
-$servername = "127.0.0.1";
-$username = "root";
-$password = "";
+$servername = "localhost";
+$username = "php";
+$password = "kps(knOcq)ATbwA_";
 $dbname = "users_db";
 
 // Create connection
