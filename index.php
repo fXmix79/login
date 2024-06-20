@@ -41,6 +41,11 @@ function deleteUser($conn, $old_username) {
     $stmt = $conn->prepare("delete from users where username = ?");
     $stmt->bind_param("s", $old_username);
     $stmt->execute();
+    if ($stmt->affected_rows > 0) {
+        echo "User ".$old_username." sucessfully deleted!";
+    } else {
+        echo "Error deleting user.";
+    }
     $stmt->close();
 }
 
@@ -60,9 +65,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_username'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['old_username'])){
     $old_username = sanitizeInput($_POST['old_username'], $conn);
-    if($old_username){
+
+    $checkStmt = $conn->prepare("select username from users where username = ?");
+    $checkStmt->bind_param("s", $old_username);
+    $checkStmt->execute();
+    $checkStmt->store_result();
+
+    if($checkStmt->num_rows > 0){
         deleteUser($conn, $old_username);
-        echo "User ". $old_username . " deleted!";
+    } else {
+        // Username does not exist
+        echo "Username not found.";
     }
 }
 
