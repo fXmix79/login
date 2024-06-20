@@ -14,12 +14,35 @@ $username = "root";
 $password = "";
 $dbname = "users_db";
 
+$generatedPassword = "";
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
+}
+
+// funcion to generate passwords
+function getRandomBytes($nbBytes = 32)
+{
+    $bytes = openssl_random_pseudo_bytes($nbBytes, $strong);
+    if (false !== $bytes && true === $strong) {
+        return $bytes;
+    }
+    else {
+        throw new \Exception("Unable to generate secure token from OpenSSL.");
+    }
+}
+
+function generatePassword($length){
+    return substr(preg_replace("/[^a-zA-Z0-9]/", "", base64_encode(getRandomBytes($length+1))),0,$length);
+}
+
+// handle automatic password generation
+if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['generate_password']){
+    $generatedPassword = generatePassword(12);
 }
 
 // Function to sanitize input and prevent SQL injection
@@ -63,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_username'])) {
     }
 }
 
+// handle user deletition
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['old_username'])){
     $old_username = sanitizeInput($_POST['old_username'], $conn);
 
@@ -78,6 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['old_username'])){
         echo "Username not found.";
     }
 }
+
+
 
 // Close connection
 $conn->close();
@@ -119,9 +145,16 @@ $conn->close();
         <h2>Register New User</h2>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             Username: <input type="text" name="new_username" required><br><br>
-            Password: <input type="password" name="new_password" required><br><br>
-            Repeat Password: <input type="password" name="repeat_password" required><br><br>
-            <input type="submit" value="Register">
+            Password: <input type="text" name="new_password" value="<?php echo  htmlspecialchars($generatedPassword); ?>" required><br><br>
+            Repeat Password: <input type="text" name="repeat_password" value="<?php echo  htmlspecialchars($generatedPassword); ?>" required><br><br>
+            <input type="submit" value="Register">            
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>Register New User</h2>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+            <input type="submit" name="generate_password" value="Generate Password"><br><br>          
         </form>
     </div>
 
