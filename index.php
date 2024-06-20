@@ -36,8 +36,16 @@ function insertUser($conn, $username, $password) {
     $stmt->close();
 }
 
+// Delete user function
+function deleteUser($conn, $old_username) {    
+    $stmt = $conn->prepare("delete from users where username = ?");
+    $stmt->bind_param("s", $old_username);
+    $stmt->execute();
+    $stmt->close();
+}
+
 // Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_username'])) {
     $new_user = sanitizeInput($_POST['new_username'], $conn);
     $new_pass = sanitizeInput($_POST['new_password'], $conn);
     $repeat_pass = sanitizeInput($_POST['repeat_password'], $conn);
@@ -47,6 +55,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "User registered successfully!";
     } else {
         echo "Passwords do not match!";
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['old_username'])){
+    $old_username = sanitizeInput($_POST['old_username'], $conn);
+    if($old_username){
+        deleteUser($conn, $old_username);
+        echo "User ". $old_username . " deleted!";
     }
 }
 
@@ -93,6 +109,14 @@ $conn->close();
             Password: <input type="password" name="new_password" required><br><br>
             Repeat Password: <input type="password" name="repeat_password" required><br><br>
             <input type="submit" value="Register">
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>Delete Existing User</h2>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+            Username: <input type="text" name="old_username" required><br><br>
+            <input type="submit" value="Delete">
         </form>
     </div>
 </body>
